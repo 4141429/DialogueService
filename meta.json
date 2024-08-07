@@ -1,0 +1,40 @@
+{
+    "name": "project.rbxl",
+    "tree": {
+      "$className": "DataModel",
+      "ServerScriptService": {
+        "$className": "ServerScriptService",
+        "$path": "src/ServerScriptService",
+        "$ignoreUnknownInstances": true
+      },
+      "StarterGui": {
+        "$className": "StarterGui",
+        "$path": "src/StarterGui",
+        "$ignoreUnknownInstances": true
+      },
+      "ReplicatedStorage": {
+        "$className": "ReplicatedStorage",
+        "$path": "src/ReplicatedStorage",
+        "$ignoreUnknownInstances": true,
+        "Packages": {
+          "$path": "Packages"
+        }
+      },
+      "StarterPlayer": {
+        "$className": "StarterPlayer",
+        "StarterPlayerScripts": {
+          "$ignoreUnknownInstances": true,
+          "$path": "src/StarterPlayerScripts"
+        },
+        "StarterCharacterScripts": {
+          "$ignoreUnknownInstances": true,
+          "$path": "src/StarterCharacterScripts"
+        }
+      },
+      "ServerStorage": {
+        "$className": "ServerStorage",
+        "$path": "src/ServerStorage",
+        "$ignoreUnknownInstances": true
+      }
+    }
+  }
