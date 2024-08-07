@@ -31,7 +31,7 @@ local scenario_arguments = {
         {
             ResponseTextSettings = {
                 Text = "Yes.",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },
@@ -40,7 +40,7 @@ local scenario_arguments = {
         {
             ResponseTextSettings = {
                 Text = "YES!!!!!!",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },

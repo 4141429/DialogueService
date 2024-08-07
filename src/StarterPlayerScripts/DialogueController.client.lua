@@ -175,6 +175,7 @@ local function displayText(text: string | {string}, client_settings_dialogue: an
     local connection
 
     local function setTextProperties()
+        print(client_settings_dialogue)
         DialogueText.FontFace = client_settings_dialogue.DialogueTextSettings.FontFace
         DialogueText.TextColor3 = client_settings_dialogue.DialogueTextSettings.TextColor3
         DialogueText.TextSize = client_settings_dialogue.DialogueTextSettings.TextSize
@@ -249,10 +250,14 @@ local function changeResponses(responses : {any})
             local response_index = tonumber(string.match(response.Name, "%d+"))
 
             if response_index and responses[response_index] and response:FindFirstChild("ResponseText") then
-                local DialogueTextSettings = responses[response_index].ResponseTextSettings :: any
-                response.Visible = true
+                local ResponseSettings = responses[response_index].ResponseTextSettings :: any
                 local textlabel = response:WaitForChild("ResponseText") :: TextLabel
-                textlabel.Text = DialogueTextSettings.Text
+
+
+                textlabel.FontFace = ResponseSettings.FontFace
+                textlabel.TextColor3 = ResponseSettings.TextColor3
+                response.Visible = true
+                textlabel.Text = ResponseSettings.Text
             else
                 response.Visible = false
             end
@@ -292,6 +297,7 @@ Sets all gui object skins to the provided scenario object
 local function setAllSkins()
     changeResponses(scenario.Responses)
     setEmotion("dialogue", scenario.ClientSettings.DialogueTextSettings.Skin)
+
     tweenObjectIn(ResponseHolder, ResponseHolderOrigin)
     ResponseHolder.Visible = true
 end
@@ -364,6 +370,7 @@ local function endDialogue()
     end
 end
 
+
 --[[
 
 Displays the provided scenario's text and responses
@@ -374,6 +381,9 @@ local function continueDialogue(provided_scenario : any?, npc_name : string?, pr
         pausePlayer(provided_scenario.ClientSettings.PausePlayer)
         viewNPC(view_point_folder, provided_scenario.ClientSettings.ViewNpcSettings)
         scenario = provided_scenario
+
+
+
         displayText(scenario.ClientSettings.DialogueTextSettings.Text, scenario.ClientSettings)
         setAllSkins()
     else

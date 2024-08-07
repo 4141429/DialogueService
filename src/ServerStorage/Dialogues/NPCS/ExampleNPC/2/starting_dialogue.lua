@@ -32,7 +32,7 @@ local scenario_arguments = {
         {
             ResponseTextSettings = {
                 Text = "That's cool!",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },
@@ -44,7 +44,7 @@ local scenario_arguments = {
         {
             ResponseTextSettings = {
                 Text = "Reset my dialogue!",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },

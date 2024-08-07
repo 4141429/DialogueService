@@ -32,7 +32,7 @@ local scenario_arguments = {
         {
             ResponseTextSettings = {
                 Text = "Bye.",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },
