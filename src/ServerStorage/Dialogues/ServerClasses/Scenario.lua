@@ -17,9 +17,11 @@ scenario.Defaults = {
     Requirements = function(player : Player)
         return true
     end,
-    functions = {function(player : Player)
-        print("Example function!")
-    end},
+    functions = {
+        function(player : Player)
+            print("Example function!")
+        end
+    },
     ClientSettings = {
         -- All textbox / textwriting settings.
         DialogueTextSettings = {
@@ -49,7 +51,7 @@ scenario.Defaults = {
         {
             ResponseTextSettings = {
                 Text = "",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },
@@ -67,7 +69,7 @@ scenario.Defaults = {
         ClientSettings = {
             DialogueTextSettings = {
                 Text = {"Hi!", "You didnt fill this in!"},
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 TextSize = 30,
                 TypeSpeed = 0.1,

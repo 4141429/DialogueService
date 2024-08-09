@@ -40,12 +40,12 @@ end
 Simply changes the saved track of the player
 
 ]]
-function saving.changeTrack(player : Player, npc : string, track : number)
+function saving.changeTrack(player : Player, npc : string, track : string | number)
     local profile = Profiles[player]
 
     if profile then
         if profile.Data.Dialogues[npc] and profile.Data.Dialogues[npc].Track then
-            profile.Data.Dialogues[npc].Track = track
+            profile.Data.Dialogues[npc].Track = tostring(track)
         else
             warn("Could not find npc", npc .. "!")
         end
@@ -99,6 +99,7 @@ Players.PlayerAdded:Connect(function(player : Player)
         
         if player:IsDescendantOf(Players) == true then
             Profiles[player] = profile
+            print(profile.Data.Dialogues)
         else
             profile:Release()
         end

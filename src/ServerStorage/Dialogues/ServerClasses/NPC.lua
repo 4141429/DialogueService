@@ -10,7 +10,7 @@ local NPC = {}
 NPC.Defaults = {
     Name = "MISSING",
     SavingOptions = {
-        Track = 1
+        Track = "1"
     },
     Requirements = function()
         return true
@@ -32,11 +32,11 @@ function NPC.Defaults:GetScenarios()
         for _, track : Folder in self.Path:GetChildren() do
             for _, Scenario in track:GetChildren() do
                 local scenario = require(Scenario :: ModuleScript) :: any
-                if not scenarios[tonumber(track.Name)] then
-                    scenarios[tonumber(track.Name)] = {}
+                if not scenarios[track.Name] then
+                    scenarios[track.Name] = {}
                 end
 
-                scenarios[tonumber(track.Name)][scenario.Name] = scenario
+                scenarios[track.Name][scenario.Name] = scenario
             end
         end
     end

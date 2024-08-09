@@ -50,7 +50,7 @@ local scenario_arguments = {
             },
             response = nil,
             functions = {function(player : Player)
-                SavingService.changeTrack(player, "Wall", 1)
+                SavingService.changeTrack(player, "Wall", "Start")
             end}
         },
     },

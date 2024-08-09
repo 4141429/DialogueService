@@ -25,16 +25,35 @@ Runs a table / singular functions, passing player as their arguments.
 
 ]]
 local function runFunctions(player : Player, func : {(player : Player) -> ()} | (player : Player) -> ())
-	-- Checking what type of functions are being passed..
+
+	--[[
+	
+	Accepts both a table of functions and a singular function.
+
+	Every function is ran with the player as the first param-
+	-eter. No, you cannot specify which parameter to request.
+
+	Only player. (ddlc reference??)
+	
+	I'm running each function in a seperate thread because
+	computation time **might** take too long for the server
+	to update the client. It'd probably be better to
+	just task.spawn this whole function but, who cares right?
+
+	]]
+
 	if func and type(func) == "table" then
-		-- If it's a table, it'll run every function with parameter "player".
 		for _, tablefunction in func do
 			if type(tablefunction) == "function" then
-				tablefunction(player)
+				task.spawn(function()
+					tablefunction(player)
+				end)
 			end
 		end
 	elseif func then
-		func(player)
+		task.spawn(function()
+			func(player)
+		end)
 	end
 end
 
@@ -67,13 +86,25 @@ local function checkValid(player: Player, scenario: string, npc : string): boole
 	local npc_table = Config.returnNPC(npc)
 	if npc_table then
 		local saved_track_number = profile.Data.Dialogues[npc].Track
-
 		-- Values that aren't guaranteed. If the script can't find npc_track (the player's saved track inside the npc) then it'll return false/run "lackingpermissions"
+		local npc_track
 
-		local npc_track = npc_table.Scenarios[tonumber(saved_track_number)]
+		npc_track = npc_table.Scenarios[tostring(saved_track_number)]
 
 		if npc_track and npc_track[scenario] then
-			local requested_scenario = npc_table.Scenarios[saved_track_number][scenario]
+			local requested_scenario = npc_track[scenario]
+
+			--[[
+			
+			There are two "requirement" functions inside of an NPC. The first is the
+			requirement for the npc itself. The second is the requirement for the
+			scenario. If you don't meet the NPC requirements then you're going
+			to be locked out / have the dialogue foricbly ended.
+
+			Every time a dialogue is continued, the NPC requirement function is ran.
+			Same goes for scenarios.
+
+			]]
 
 			local requirement_function = requested_scenario.Requirements
 			local npc_requirement_function = npc_table.Requirements
@@ -94,35 +125,54 @@ Checks whether they're allowed to access the next dialogue, runs all required fu
 
 ]]
 local function continueDialogue(player : Player, npc_name : string, requested_scenario : string, previous_scenario : string, response_index : number)
-	local profile = SavingService.return_profile(player)
 	local npc = Config.returnNPC(npc_name)
-	local saved_track_number = profile.Data.Dialogues[npc_name].Track
 
-	local new_scenario = npc.Scenarios[saved_track_number][requested_scenario]
+	local saved_track = tostring(SavingService.returnTrack(player, npc_name))
+
+	--[[
 	
-	local previous_scenario_response_functions = npc.Scenarios[saved_track_number][previous_scenario].Responses[response_index].functions
+	Note that the reason why I'm forcibly setting each track name to a string
+	is because the folder inside of the game is *always* a string.
+	
+	No exceptions- unless you count nil.
+	
+	]]
 
-	-- Runs the previous scenario's response function.
+	local new_scenario = npc.Scenarios[tostring(saved_track)][requested_scenario]
+	local previous_scenario_response_functions = npc.Scenarios[saved_track][previous_scenario].Responses[response_index].functions
 
+	--[[
+	
+	No, I am NOT running the next scenario's functions.
+	I am running the previous scenario's functions- 
+	the ones you set inside the "Responses" section
+	of your Scenario script.
+
+	]]
+	
 	runFunctions(player, previous_scenario_response_functions or nil)
 
 	if checkValid(player, requested_scenario, npc_name) then
 		UpdateDialogue:FireClient(player, new_scenario, npc_name, new_scenario.Name)
+		runFunctions(player, new_scenario.functions)
 		return
 	end
 
-	lackingPermissions(player, npc.Scenarios[saved_track_number][requested_scenario])
+	lackingPermissions(player, npc.Scenarios[saved_track][requested_scenario])
 end
+
 --[[
 
 Initializes a dialogue with the player.
 
 ]]
 function DialogueService.startDialogue(player : Player, npc_name : string, view_point_folder : Folder, prompt : ProximityPrompt)
-	if checkValid(player, "starting_dialogue", npc_name ) and view_point_folder.Parent and view_point_folder.Parent:FindFirstChild("ProximityPrompt") then
+
+	if checkValid(player, "starting_dialogue", npc_name ) then
 		local dialogue = Config.returnNPC(npc_name)
 		local saved_track_number = SavingService.returnTrack(player, npc_name)
-		StartDialogue:FireClient(player, dialogue.Scenarios[saved_track_number]["starting_dialogue"], dialogue.Name, view_point_folder, prompt)
+
+		StartDialogue:FireClient(player, dialogue.Scenarios[tostring(saved_track_number)]["starting_dialogue"], dialogue.Name, view_point_folder, prompt)
 	end
 end
 
