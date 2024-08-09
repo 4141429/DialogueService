@@ -29,6 +29,18 @@ end
 Returns a dialogue based off their CODE name. The instance name is purely for organization.
 
 ]]
+
+function DialogueHandler.returnScenario(npc_name : string, track : any, scenario : string)
+    local npc_table = DialogueHandler.returnNPC(npc_name)
+    if npc_table and npc_table.Scenarios[track] then
+        local npc_track = npc_table.Scenarios[track]
+        if npc_track[scenario] then
+            return npc_track[scenario]
+        end
+    end
+    return
+end
+
 function DialogueHandler.returnNPC(npc_name : string)
     for _, NPCScript : ModuleScript in NPCS:GetChildren() do
         local npc = require(NPCScript) :: any

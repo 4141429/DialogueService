@@ -74,7 +74,7 @@ Returns the saved track number a player has- useful for non-profile-service peop
 ]]
 function saving.returnTrack(player : Player, npc : string)
     if Profiles[player] and Profiles[player].Data.Dialogues[npc] then
-        return Profiles[player].Data.Dialogues[npc].Track
+        return tostring(Profiles[player].Data.Dialogues[npc].Track)
     else
         return nil
     end
@@ -99,7 +99,6 @@ Players.PlayerAdded:Connect(function(player : Player)
         
         if player:IsDescendantOf(Players) == true then
             Profiles[player] = profile
-            print(profile.Data.Dialogues)
         else
             profile:Release()
         end

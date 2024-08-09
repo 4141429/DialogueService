@@ -22,7 +22,7 @@ local scenario_arguments = {
         ViewNpcSettings = {
             enabled = true,
             tweeninfo = {time = 2, style = Enum.EasingStyle.Exponential, direction = Enum.EasingDirection.Out},
-            position = "2"
+            viewpointname = "2"
         },
         -- Pauses player if true
         PausePlayer = false,

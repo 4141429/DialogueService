@@ -82,38 +82,32 @@ Runs the requirement functions of a scenario and NPC, then returns a bool if it 
 
 ]]
 local function checkValid(player: Player, scenario: string, npc : string): boolean
-	local profile = SavingService.return_profile(player)
 	local npc_table = Config.returnNPC(npc)
-	if npc_table then
-		local saved_track_number = profile.Data.Dialogues[npc].Track
-		-- Values that aren't guaranteed. If the script can't find npc_track (the player's saved track inside the npc) then it'll return false/run "lackingpermissions"
-		local npc_track
+	local saved_track = SavingService.returnTrack(player, npc)
 
-		npc_track = npc_table.Scenarios[tostring(saved_track_number)]
+	local requested_scenario = Config.returnScenario(npc, saved_track, scenario)
 
-		if npc_track and npc_track[scenario] then
-			local requested_scenario = npc_track[scenario]
+	if requested_scenario then
 
-			--[[
-			
-			There are two "requirement" functions inside of an NPC. The first is the
-			requirement for the npc itself. The second is the requirement for the
-			scenario. If you don't meet the NPC requirements then you're going
-			to be locked out / have the dialogue foricbly ended.
+		--[[
+		
+		There are two "requirement" functions inside of an NPC. The first is the
+		requirement for the npc itself. The second is the requirement for the
+		scenario. If you don't meet the NPC requirements then you're going
+		to be locked out / have the dialogue foricbly ended.
 
-			Every time a dialogue is continued, the NPC requirement function is ran.
-			Same goes for scenarios.
+		Every time a dialogue is continued, the NPC requirement function is ran.
+		Same goes for scenarios.
 
-			]]
+		]]
 
-			local requirement_function = requested_scenario.Requirements
-			local npc_requirement_function = npc_table.Requirements
+		local requirement_function = requested_scenario.Requirements
+		local npc_requirement_function = npc_table.Requirements
 
-			if not requirement_function(player) or not npc_requirement_function(player) then
-				return false
-			end
-			return true
+		if not requirement_function(player) or not npc_requirement_function(player) then
+			return false
 		end
+		return true
 	end
 	return false
 end
@@ -126,8 +120,7 @@ Checks whether they're allowed to access the next dialogue, runs all required fu
 ]]
 local function continueDialogue(player : Player, npc_name : string, requested_scenario : string, previous_scenario : string, response_index : number)
 	local npc = Config.returnNPC(npc_name)
-
-	local saved_track = tostring(SavingService.returnTrack(player, npc_name))
+	local saved_track = SavingService.returnTrack(player, npc_name)
 
 	--[[
 	
@@ -138,8 +131,8 @@ local function continueDialogue(player : Player, npc_name : string, requested_sc
 	
 	]]
 
-	local new_scenario = npc.Scenarios[tostring(saved_track)][requested_scenario]
-	local previous_scenario_response_functions = npc.Scenarios[saved_track][previous_scenario].Responses[response_index].functions
+	local new_scenario = Config.returnScenario(npc_name, saved_track, requested_scenario)
+	local previous_scenario_response_functions = Config.returnScenario(npc_name, saved_track, previous_scenario).Responses[response_index].functions
 
 	--[[
 	
@@ -170,9 +163,10 @@ function DialogueService.startDialogue(player : Player, npc_name : string, view_
 
 	if checkValid(player, "starting_dialogue", npc_name ) then
 		local dialogue = Config.returnNPC(npc_name)
-		local saved_track_number = SavingService.returnTrack(player, npc_name)
+		local saved_track = SavingService.returnTrack(player, npc_name)
+		local starting_dialogue = Config.returnScenario(npc_name, saved_track, "starting_dialogue")
 
-		StartDialogue:FireClient(player, dialogue.Scenarios[tostring(saved_track_number)]["starting_dialogue"], dialogue.Name, view_point_folder, prompt)
+		StartDialogue:FireClient(player, starting_dialogue, dialogue.Name, view_point_folder, prompt)
 	end
 end
 

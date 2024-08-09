@@ -193,6 +193,9 @@ local function displayText(text: string | {string}, client_settings_dialogue: an
                 DialogueText.MaxVisibleGraphemes = i
                 task.wait(waitTime)
             end
+
+            task.wait(client_settings_dialogue.AutoSkipSettings.waittime)   
+
             goodtogo = true
         end)
         coroutine.resume(writing_text_coroutine)
@@ -244,22 +247,24 @@ Takes your responses from your scenario. Shows each responses skin and text.
 
 ]]
 local function changeResponses(responses : {any})
-    for _, response in ResponseHolder:GetChildren() do
-        if response:IsA("ImageButton") then
-            -- Grabbing the index from the name because the roblox-set index is unreliable and is messed up due to me using a ui grid layout.
-            local response_index = tonumber(string.match(response.Name, "%d+"))
+    if responses then
+        for _, response in ResponseHolder:GetChildren() do
+            if response:IsA("ImageButton") then
+                -- Grabbing the index from the name because the roblox-set index is unreliable and is messed up due to me using a ui grid layout.
+                local response_index = tonumber(string.match(response.Name, "%d+"))
 
-            if response_index and responses[response_index] and response:FindFirstChild("ResponseText") then
-                local ResponseSettings = responses[response_index].ResponseTextSettings :: any
-                local textlabel = response:WaitForChild("ResponseText") :: TextLabel
+                if response_index and responses[response_index] and response:FindFirstChild("ResponseText") then
+                    local ResponseSettings = responses[response_index].ResponseTextSettings :: any
+                    local textlabel = response:WaitForChild("ResponseText") :: TextLabel
 
 
-                textlabel.FontFace = ResponseSettings.FontFace
-                textlabel.TextColor3 = ResponseSettings.TextColor3
-                response.Visible = true
-                textlabel.Text = ResponseSettings.Text
-            else
-                response.Visible = false
+                    textlabel.FontFace = ResponseSettings.FontFace
+                    textlabel.TextColor3 = ResponseSettings.TextColor3
+                    response.Visible = true
+                    textlabel.Text = ResponseSettings.Text
+                else
+                    response.Visible = false
+                end
             end
         end
     end
@@ -341,11 +346,14 @@ Self explanatory; views / unviews the specified part.
 ]]
 local function viewNPC(viewpoint : Folder?, viewsetting : any?)
     local current_camera = game:GetService("Workspace").CurrentCamera
-    if viewpoint and viewsetting and viewsetting.enabled and viewpoint:FindFirstChild(tostring(viewsetting.position)) then
-        local position = viewpoint:WaitForChild(tostring(viewsetting.position)) :: BasePart
+    if viewpoint and viewsetting and viewsetting.enabled and viewpoint:FindFirstChild(tostring(viewsetting.viewpointname)) then
+        local position = viewpoint:FindFirstChild(tostring(viewsetting.viewpointname)) :: BasePart
         local USEDtweeninfo = TweenInfo.new(viewsetting.tweeninfo.time, viewsetting.tweeninfo.style, viewsetting.tweeninfo.direction)
-        current_camera.CameraType = Enum.CameraType.Scriptable
-        TweenService:Create(current_camera, USEDtweeninfo, { CFrame = position.CFrame }):Play()
+
+        if position then
+            current_camera.CameraType = Enum.CameraType.Scriptable
+            TweenService:Create(current_camera, USEDtweeninfo, { CFrame = position.CFrame }):Play()
+        end
     else
         current_camera.CameraType = Enum.CameraType.Custom
     end
@@ -378,11 +386,10 @@ Displays the provided scenario's text and responses
 ]]
 local function continueDialogue(provided_scenario : any?, npc_name : string?, provided_scenario_name : string?)
     if provided_scenario and npc_name and provided_scenario_name then
-        pausePlayer(provided_scenario.ClientSettings.PausePlayer)
-        viewNPC(view_point_folder, provided_scenario.ClientSettings.ViewNpcSettings)
         scenario = provided_scenario
 
-
+        pausePlayer(provided_scenario.ClientSettings.PausePlayer)
+        viewNPC(view_point_folder, provided_scenario.ClientSettings.ViewNpcSettings)
 
         displayText(scenario.ClientSettings.DialogueTextSettings.Text, scenario.ClientSettings)
         setAllSkins()
@@ -406,7 +413,19 @@ local function startDialogue(scen : any, npc_name : string, viewpointfolder : Fo
             new_prompt.Enabled = false
 
         end
-        local provided_scenario = setmetatable(scen, { __index = prototype })
+
+        local provided_scenario = setmetatable(scen, { 
+            __index = function(table, key)
+                if table[key] ~= nil then
+                    return table[key]
+                elseif prototype[key] ~= nil then
+                    return prototype[key]
+                else
+                    return nil
+                end
+            end
+        })
+        
         view_point_folder = viewpointfolder
         DialogueText.Text = ""
         scenario = provided_scenario

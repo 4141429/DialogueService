@@ -15,7 +15,7 @@ scenario.Defaults = {
         return true
     end,
     ClientSettings = {
-        -- All textbox / textwriting settings.
+
         DialogueTextSettings = {
             Text = {"This dialogue text has not been filled in!"},
             FontFace = Font.fromName("ComicNeueAngular"),
@@ -24,28 +24,26 @@ scenario.Defaults = {
             TypeSpeed = 0.1,
             Skin = "default"
         },
-        -- Autoskip related settings.
+
         AutoSkipSettings = {
             speed = 0.5,
             allow_manual_skipping = true
         },
-        -- Settings regarding the viewpoint to be viewed, and the tween used.
+
         ViewNpcSettings = {
             enabled = true,
             tweeninfo = {time = 2, style = Enum.EasingStyle.Exponential, direction = Enum.EasingDirection.Out},
-            position = "1"
+            viewpointname = "1"
         },
-        -- Pauses player if true
+
         PausePlayer = false,
         
     },
     Responses = {
         {
-            -- Response box text-options.
-            --TODO #NOTIMPLEMENTS
             ResponseTextSettings = {
                 Text = "",
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 Skin = "default"
             },
@@ -62,7 +60,7 @@ scenario.Defaults = {
         ClientSettings = {
             DialogueTextSettings = {
                 Text = {"Hi!", "You didnt fill this in!"},
-                FontFace = "Comic Neue Angular",
+                FontFace = Font.fromName("ComicNeueAngular"),
                 TextColor3 = Color3.fromRGB(97, 73, 39),
                 TextSize = 30,
                 TypeSpeed = 0.1,
@@ -77,7 +75,7 @@ scenario.Defaults = {
             ViewNpcSettings = {
                 enabled = true,
                 tweeninfo = {time = 2, style = Enum.EasingStyle.Quint, direction = Enum.EasingDirection.Out},
-                position = "1"
+                viewpointname = "1"
             },
             PausePlayer = false,
         }
